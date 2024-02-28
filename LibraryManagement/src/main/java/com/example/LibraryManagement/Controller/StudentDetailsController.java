@@ -1,8 +1,10 @@
 package com.example.LibraryManagement.Controller;
 
 import com.example.LibraryManagement.Entity.StudentDetails;
+import com.example.LibraryManagement.Exception.CustomException.NotFoundException;
 import com.example.LibraryManagement.Repository.StudentDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ public class StudentDetailsController {
 
     @Autowired
     private StudentDetailsRepository studentDetailsRepository;
+
 
     @PostMapping ("/add")
     public ResponseEntity<Object> add(@RequestBody StudentDetails studentDetails){
@@ -31,8 +34,12 @@ public class StudentDetailsController {
     }
 
     @GetMapping ("/findById")
-    public ResponseEntity<Object> findById(@RequestParam("id") Integer id){
+    public ResponseEntity<Object> findById(@RequestParam("id") Integer id) throws NotFoundException {
         Optional<StudentDetails> save = studentDetailsRepository.findById(id);
+        if( save.isEmpty() ){
+            throw new NotFoundException("Student Not Found in this id :"+id,HttpStatus.NOT_FOUND);
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student Not Found In this Id : "+id);
+        }
         return ResponseEntity.ok(save);
 
     }

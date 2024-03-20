@@ -20,4 +20,12 @@ public class StudentDetails {
 
     @Column(name = "mobile_number")
     private Long mobileNumber;
+
+    @Column(name = "email")
+    private String email;
+
+
+    @OneToOne
+    @JoinColumn(name="student_log_in_id")
+    private StudentLogIn studentLogIn;
 }

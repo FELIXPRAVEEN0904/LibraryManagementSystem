@@ -1,8 +1,10 @@
 package com.example.LibraryManagement.Controller;
 
 import com.example.LibraryManagement.Entity.StudentDetails;
+import com.example.LibraryManagement.Entity.StudentLogIn;
 import com.example.LibraryManagement.Exception.CustomException.NotFoundException;
 import com.example.LibraryManagement.Repository.StudentDetailsRepository;
+import com.example.LibraryManagement.Repository.StudentLogInRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +20,28 @@ public class StudentDetailsController {
     @Autowired
     private StudentDetailsRepository studentDetailsRepository;
 
+    @Autowired
+    private StudentLogInRepository studentLogInRepository;
+
 
     @PostMapping ("/add")
     public ResponseEntity<Object> add(@RequestBody StudentDetails studentDetails){
+        StudentLogIn studentLogIn = studentDetails.getStudentLogIn();
+
+        if(studentLogIn == null){
+            studentLogIn = new StudentLogIn();
+        }
+
+        studentLogIn.setUsername((studentDetails.getEmail()));
+
+        studentLogIn.setPassword(studentDetails.getEmail().split("@")[0]);
+
+        studentLogInRepository.save(studentLogIn);
+
+        studentDetails.setStudentLogIn(studentLogIn);
+
         StudentDetails save = studentDetailsRepository.save(studentDetails);
+
         return ResponseEntity.ok(save);
 
     }
